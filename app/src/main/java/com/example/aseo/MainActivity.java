@@ -47,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
             "Unidad Administrativa",
             "Coordinación de Planeación",
             "Dirección General",
-            "Áreas Comunes"};
+            "Áreas Comunes",
+            "Firmas"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

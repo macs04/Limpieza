@@ -46,21 +46,33 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
     //endregion
 
-    //region Obtener las areas evaluadas
+    //region Checar si ya se evaluo una area en una fecha
     public boolean saved(String area, String date){
-        //ArrayList<String> lista=new ArrayList<String>();
         Cursor c=db.rawQuery("SELECT _id, Area FROM limpieza WHERE Area = '" + area + "' AND Fecha = '" + date + "'",  null);
         if (c != null && c.getCount() > 0) {
             return true;
-            /*c.moveToFirst();
-            do {
-                String r = c.getString(c.getColumnIndex("Area"));
-                lista.add(r);
-            } while (c.moveToNext());*/
         }
         //Cerramos el cursor
         c.close();
         return false;
+    }
+    //endregion
+
+    //region Obtener los datos las evaluaciones realizadas en una fecha
+    public ArrayList<String> getAreas(String date){
+        ArrayList<String> lista = new ArrayList<String>();
+        Cursor c=db.rawQuery("select _id, Area from limpieza where Fecha = '" + date + "'",  null);
+        if (c != null && c.getCount()>0) {
+            c.moveToFirst();
+            do {
+                String Area = c.getString(c.getColumnIndex("Area"));
+                lista.add(Area);
+            } while (c.moveToNext());
+        }
+
+        //Cerramos el cursor
+        c.close();
+        return lista;
     }
     //endregion
 

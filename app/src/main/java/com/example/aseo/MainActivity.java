@@ -3,6 +3,7 @@ package com.example.aseo;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private SQLiteHelper db;
     private Spinner sArea;
     private Button btnRate;
+    private ImageView imageView;
     private EditText etDate;
 
     private final String[] areas = {"Administración",
@@ -61,13 +64,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public View getDropDownView(final int position, final View convertView, final ViewGroup parent)
             {
-                final View v = super.getDropDownView(position,convertView,parent);
+                final View v = super.getDropDownView(position, convertView, parent);
                 v.post(new Runnable()
                 {
                     @Override
                     public void run()
                     {
                         ((TextView)v.findViewById(android.R.id.text1)).setSingleLine(false);
+
+                        int pos = sArea.getSelectedItemPosition();
+
+                        db.getReadableDatabase();
+                        String fecha = etDate.getText().toString();
+                        ArrayList<String> lista = db.getAreas(fecha);
+                        if(convertView == null && lista.contains(areas[position])){
+                            ((TextView)v.findViewById(android.R.id.text1)).setTextColor(Color.GRAY);
+                        }
                     }
                 });
                 return v;
@@ -88,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button btnRate = (Button) findViewById(R.id.btnRate);
+        btnRate = (Button) findViewById(R.id.btnRate);
 
         btnRate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,18 +109,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        imageView = (ImageView) findViewById(R.id.imageView);
+
         etDate = (EditText) findViewById(R.id.etDate);
         etDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (v.getId() == R.id.etDate) {
                     showDatePickerDialog(etDate);
-
-                    RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-                    int radioButtonID = radioGroup.getCheckedRadioButtonId();
-                    RadioButton rbtn = (RadioButton)radioGroup.findViewById(radioButtonID);
-                    int position = radioGroup.indexOfChild(rbtn);
-                    refresh(position);
                 }
             }
         });
@@ -131,11 +139,11 @@ public class MainActivity extends AppCompatActivity {
         rbtn4.setAlpha(transparency);
         rbtn5.setAlpha(transparency);
 
-        rbtn1.setButtonDrawable(R.mipmap.ic_launcher1_round);
-        rbtn2.setButtonDrawable(R.mipmap.ic_launcher2_round);
-        rbtn3.setButtonDrawable(R.mipmap.ic_launcher3_round);
-        rbtn4.setButtonDrawable(R.mipmap.ic_launcher4_round);
-        rbtn5.setButtonDrawable(R.mipmap.ic_launcher5_round);
+        rbtn1.setButtonDrawable(R.drawable.face1);
+        rbtn2.setButtonDrawable(R.drawable.face2);
+        rbtn3.setButtonDrawable(R.drawable.face3);
+        rbtn4.setButtonDrawable(R.drawable.face4);
+        rbtn5.setButtonDrawable(R.drawable.face5);
 
         // Is the button now checked?
         boolean checked = ((RadioButton) view).isChecked();
@@ -194,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
 
                         radioGroup.setVisibility(View.GONE);
                         btnRate.setVisibility(View.GONE);
+                        imageView.setVisibility(View.GONE);
                         Toast.makeText(getApplicationContext(), "Guardado", Toast.LENGTH_LONG).show();
                     }
                 })
@@ -215,8 +224,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 // +1 because january is zero
-                final String selectedDate = day + " / " + (month+1) + " / " + year;
+                final String selectedDate = day + " / " + (month + 1) + " / " + year;
                 editText.setText(selectedDate);
+
+                int pos = sArea.getSelectedItemPosition();
+                refresh(pos);
             }
         });
         newFragment.show(getSupportFragmentManager(), "datePicker");
@@ -234,11 +246,13 @@ public class MainActivity extends AppCompatActivity {
         if(db.saved(areas[position], fecha)){
             btnRate.setVisibility(View.GONE);
             radioGroup.setVisibility(View.GONE);
+            imageView.setVisibility(View.GONE);
             tvSaved.setVisibility(View.VISIBLE);
         }
         else {
             btnRate.setVisibility(View.VISIBLE);
             radioGroup.setVisibility(View.VISIBLE);
+            imageView.setVisibility(View.VISIBLE);
             tvSaved.setVisibility(View.GONE);
         }
 
@@ -254,10 +268,10 @@ public class MainActivity extends AppCompatActivity {
         rbtn4.setAlpha(transparency);
         rbtn5.setAlpha(transparency);
 
-        rbtn1.setButtonDrawable(R.mipmap.ic_launcher1_round);
-        rbtn2.setButtonDrawable(R.mipmap.ic_launcher2_round);
-        rbtn3.setButtonDrawable(R.mipmap.ic_launcher3_round);
-        rbtn4.setButtonDrawable(R.mipmap.ic_launcher4_round);
-        rbtn5.setButtonDrawable(R.mipmap.ic_launcher5_round);
+        rbtn1.setButtonDrawable(R.drawable.face1);
+        rbtn2.setButtonDrawable(R.drawable.face2);
+        rbtn3.setButtonDrawable(R.drawable.face3);
+        rbtn4.setButtonDrawable(R.drawable.face4);
+        rbtn5.setButtonDrawable(R.drawable.face5);
     }
 }
